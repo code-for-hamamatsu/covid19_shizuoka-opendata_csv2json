@@ -1,6 +1,6 @@
 # covid19_shizuoka-opendata_csv2json
 
-「静岡県ふじのくにオープンデータカタログ」で公開されているCSVデータを
+「静岡県ふじのくにオープンデータカタログ」で公開されているCSVデータを  
 「新型コロナウイルス感染症対策サイト」で利用しているdata.jsonへ変換するプロジェクトです。
 
 Pythonバージョン : 3.6
@@ -39,13 +39,13 @@ key : patients_summary
 
 ## 引数について
 
-GraphType-key:API-IDの配列
-という形式で引数指定できます。
-例 : inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314
+GraphType-key:API-IDの配列  
+というような形式で引数指定できます。  
+例 : inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314  
 
-Pythonを直接実行する場合
-lambda_function.py
-lambda_handlerのeventに以下のようなJSONを渡します。
+Pythonを直接実行する場合  
+lambda_function.py  
+lambda_handlerのeventに以下のようなJSONを渡します。  
 ```
 {
     "queryStringParameters": {
@@ -54,6 +54,8 @@ lambda_handlerのeventに以下のようなJSONを渡します。
 }
 ```
 
-API Gateway経由でLambdaを実行する場合
-API GatewayのGETでクエリパラメータに以下のように指定します。
-?type=inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314
+API Gateway経由でLambdaを実行する場合  
+API GatewayのGETでクエリパラメータに以下のように指定します。  
+```
+?type=inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314  
+```
