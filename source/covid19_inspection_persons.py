@@ -11,8 +11,8 @@ def convert2json(csvData, dtUpdated):
         logger.info(dtUpdated)
         logger.info(csvData)
 
-        listDate = csvData["受付_年月日"]
-        listCnt = csvData["人数"]
+        listDate = csvData["実施_年月日"]
+        listCnt = csvData["検査実施_人数"]
         labels = []
         dataList = []
 
