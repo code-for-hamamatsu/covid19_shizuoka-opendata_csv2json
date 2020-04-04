@@ -7,11 +7,11 @@ import json
 import pytz
 from datetime import date, datetime
 
-import covid19_hamamatsu_main_summary
-import covid19_hamamatsu_patients
-import covid19_hamamatsu_patients_summary
-import covid19_hamamatsu_inspection_persons
-import covid19_hamamatsu_contacts
+import covid19_main_summary
+import covid19_patients
+import covid19_patients_summary
+import covid19_inspection_persons
+import covid19_contacts
 
 import logging
 logger = logging.getLogger()
@@ -42,23 +42,23 @@ def lambda_handler(event, context):
             csvData, dtUpdated = getCSVData("https://opendata.pref.shizuoka.jp/api/package_show?id=" + apiID)
             if type == "main_summary":
                 # 検査陽性者の状況
-                result[type] = covid19_hamamatsu_main_summary.convert2json(csvData, dtUpdated)
+                result[type] = covid19_main_summary.convert2json(csvData, dtUpdated)
 
             elif type == "patients":
                 # 検査陽性患者の属性
-                result[type] = covid19_hamamatsu_patients.convert2json(csvData, dtUpdated)
+                result[type] = covid19_patients.convert2json(csvData, dtUpdated)
 
             elif type == "patients_summary":
                 # 検査陽性患者数
-                result[type] = covid19_hamamatsu_patients_summary.convert2json(csvData, dtUpdated)
+                result[type] = covid19_patients_summary.convert2json(csvData, dtUpdated)
                 
             elif type == "inspection_persons":
                 # PCR検査実施人数
-                result[type] = covid19_hamamatsu_inspection_persons.convert2json(csvData, dtUpdated)
+                result[type] = covid19_inspection_persons.convert2json(csvData, dtUpdated)
                 
             elif type == "contacts":
                 # 新型コロナに関する相談件数
-                result[type] = covid19_hamamatsu_contacts.convert2json(csvData, dtUpdated)
+                result[type] = covid19_contacts.convert2json(csvData, dtUpdated)
 
             else:
                 result[type] = "not supported..."

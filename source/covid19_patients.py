@@ -1,7 +1,7 @@
-# patients_summary
-# 検査陽性患者数
+# patients
+# 検査陽性患者の属性
 
-import covid19_hamamatsu_util
+import covid19_util
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

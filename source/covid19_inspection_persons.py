@@ -1,7 +1,7 @@
 # inspection_persons
 # PCR検査実施人数
 
-import covid19_hamamatsu_util
+import covid19_util
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -20,7 +20,7 @@ def convert2json(csvData, dtUpdated):
         for n in range(length):
             day = listDate[n]
             cnt = listCnt[n]
-            if covid19_hamamatsu_util.is_nan(cnt):
+            if covid19_util.is_nan(cnt):
                 cnt = int(0)
             labels.append("{0}T08:00:00.000Z".format(day))
             dataList.append(int(cnt))
