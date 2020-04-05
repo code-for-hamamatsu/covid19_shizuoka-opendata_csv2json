@@ -27,9 +27,10 @@ def lambda_handler(event, context):
         result = {}
 
         types = SUPPORTED_TYPE
-        qsp = event["queryStringParameters"]
-        if qsp is not None and qsp["type"] is not None:
-            types = event["queryStringParameters"]["type"]
+        if event is not None:
+            qsp = event["queryStringParameters"]
+            if qsp is not None and qsp["type"] is not None:
+                types = event["queryStringParameters"]["type"]
             
         logger.info(types)
         dataList = types.split(",")
