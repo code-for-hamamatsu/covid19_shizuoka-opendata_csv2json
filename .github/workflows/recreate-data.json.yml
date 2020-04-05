@@ -23,6 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install requests -t .
     - name: RUN PYTHON SCRIPT
       run: |
         python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process(); print(x)" > data.json
