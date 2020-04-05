@@ -11,8 +11,6 @@ def convert2json(csvData, dtUpdated):
         logger.info(dtUpdated)
         logger.info(csvData)
 
-        print(dtUpdated)
-
         listdate = csvData["公表_年月日"]
         listresidence = csvData["患者_居住地"]
         listage = csvData["患者_年代"]
@@ -37,8 +35,6 @@ def convert2json(csvData, dtUpdated):
                 discharge = "不明"
 
             dataList.append({"リリース日": releaseday, "居住地": residence, "年代": age, "性別": sex, "退院": discharge, "date": day})
-
-        print(dataList)
 
         return {"date": dtUpdated.strftime('%Y/%m/%d %H:%M'), "data": dataList}
 
