@@ -64,3 +64,4 @@ API GatewayのGETでクエリパラメータに以下のように指定します
 ```
 ?type=inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314  
 ```
+
