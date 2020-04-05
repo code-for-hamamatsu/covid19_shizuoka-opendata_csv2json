@@ -34,7 +34,7 @@ jobs:
         git add .
         git commit -m 'recreate by GitHub Actions'
     - name: PUSH
-      uses: ad-m/github-push-action@master
+      uses: ad-m/github-push-action@development
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ steps.extract_branch.outputs.branch }}
