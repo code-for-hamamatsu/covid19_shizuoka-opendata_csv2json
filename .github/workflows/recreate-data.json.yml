@@ -25,7 +25,7 @@ jobs:
         python -m pip install --upgrade pip
     - name: RUN PYTHON SCRIPT
       run: |
-        python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process(); print(x)" > data/hamamatsu/data.json
+        python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process(); print(x)" > data.json
         
     - name: COMMIT
       run: |
