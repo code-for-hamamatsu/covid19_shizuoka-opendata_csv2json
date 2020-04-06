@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-SUPPORTED_TYPE = "main_summary:xx,patients:yy,patients_summary:zz,inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314"
+SUPPORTED_TYPE = "main_summary:a3122ca8-a30b-4f64-ab17-a6fe95d46fba,patients_summary:92f9ebcd-a3f1-4d5d-899b-d69214294a45,inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314,patients:5ab47071-3651-457c-ae2b-bfb8fdbe1af1"
 SUPPORTED_TYPE_ARY = SUPPORTED_TYPE.split(",")
 
 def lambda_handler(event, context):
