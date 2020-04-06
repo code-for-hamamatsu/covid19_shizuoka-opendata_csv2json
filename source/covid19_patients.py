@@ -12,6 +12,7 @@ def convert2json(csvData, dtUpdated):
         logger.info(csvData)
 
         listdate = csvData["公表_年月日"]
+        listcity = csvData["市区町村名"]
         listresidence = csvData["患者_居住地"]
         listage = csvData["患者_年代"]
         listsex = csvData["患者_性別"]
@@ -23,7 +24,7 @@ def convert2json(csvData, dtUpdated):
 
             day = listdate[n]
             releaseday = "{0}T08:00:00.000Z".format(day)
-            residence = listresidence[n]
+            residence = listcity[n] + ' ' + listresidence[n]
             age = listage[n]
             if covid19_util.is_nan(age):
                 age = "不明"
