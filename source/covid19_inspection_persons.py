@@ -18,6 +18,7 @@ def convert2json(csvData, dtUpdated):
 
         length = len(listDate)
         for n in range(length):
+            if '/' in listDate[n]: listDate[n]=listDate[n].replace('/','-')
             day = listDate[n]
             cnt = listCnt[n]
             if covid19_util.is_nan(cnt):
