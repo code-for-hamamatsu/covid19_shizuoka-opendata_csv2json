@@ -14,7 +14,18 @@ def convert2json(csvData, dtUpdated):
         
         length = len(listDate)
         for n in range(length):
-            day = listDate[n]
+
+            if '/' in listDate[n]:
+                Date= listDate[n].split("/")
+                Date[1] = Date[1].zfill(2)
+                Date[2] = Date[2].zfill(2)
+                day = Date[0]+"-"+Date[1]+"-"+ Date[2]
+            elif '-' in listDate[n]:
+                Date= listDate[n].split("-")
+                Date[1] = Date[1].zfill(2)
+                Date[2] = Date[2].zfill(2)
+                day = Date[0]+"-"+Date[1]+"-"+ Date[2]
+
             cnt = listCnt[n]
             if not covid19_util.is_nan(cnt):
                 list.append({'日付': "{0}T08:00:00.000Z".format(day), "小計": int(cnt)})
