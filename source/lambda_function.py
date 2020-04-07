@@ -1,3 +1,5 @@
+import sys
+sys.dont_write_bytecode = True
 import os
 import os.path
 import pandas as pd
@@ -6,7 +8,6 @@ import io
 import json
 import pytz
 from datetime import date, datetime
-
 import covid19_main_summary
 import covid19_patients
 import covid19_patients_summary
@@ -17,8 +18,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-SUPPORTED_TYPE = "main_summary:xx,patients:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,patients_summary:zz,inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314"
-SUPPORTED_TYPE_ARY = SUPPORTED_TYPE.split(",")
+SUPPORTED_TYPE = "main_summary:a3122ca8-a30b-4f64-ab17-a6fe95d46fba,patients:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,patients_summary:92f9ebcd-a3f1-4d5d-899b-d69214294a45,inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314"
 
 def lambda_handler(event, context):
     try:  
@@ -32,7 +32,11 @@ def lambda_handler(event, context):
             if qsp is not None and qsp["type"] is not None:
                 types = event["queryStringParameters"]["type"]
             
+        result["lastUpdate"] = ""
+
         logger.info(types)
+        dtLastUpdate = datetime(2000, 1, 1, 1, 1, tzinfo=pytz.timezone('Asia/Tokyo'))
+        
         dataList = types.split(",")
         for data in dataList:
             logger.info(data)
@@ -41,6 +45,10 @@ def lambda_handler(event, context):
             apiID = tmp[1]
             
             csvData, dtUpdated = getCSVData("https://opendata.pref.shizuoka.jp/api/package_show?id=" + apiID)
+            
+            if(dtLastUpdate < dtUpdated):
+                dtLastUpdate = dtUpdated
+                
             if type == "main_summary":
                 # 検査陽性者の状況
                 result[type] = covid19_main_summary.convert2json(csvData, dtUpdated)
@@ -63,6 +71,8 @@ def lambda_handler(event, context):
 
             else:
                 result[type] = "not supported..."
+                
+        result["lastUpdate"] = dtLastUpdate.strftime('%Y/%m/%d %H:%M')
                 
         logger.info(result)
         return {
