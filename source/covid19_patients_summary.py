@@ -1,6 +1,7 @@
 # patients_summary
 # 検査陽性患者数
 
+import re
 import covid19_util
 import logging
 logger = logging.getLogger()
@@ -11,14 +12,17 @@ def convert2json(csvData, dtUpdated):
         logger.info(dtUpdated)
         logger.info(csvData)
 
-        listdate = csvData["公表_年月日"]
+        listDate = csvData["公表_年月日"]
         listPosi = csvData["陽性患者人数"]
 
         dataList = []
 
-        for n in range(len(listdate)):
+        for n in range(len(listDate)):
 
-            day = listdate[n]
+            Date = re.split('[年月日:;.,-/]',  listDate[n])
+            for i in (1,2): Date[i] = Date[i].zfill(2)
+            day = Date[0]+"-"+Date[1]+"-"+ Date[2]
+
             releaseday = "{0}T08:00:00.000Z".format(day)
             posiCnt = listPosi[n]
             if covid19_util.is_nan(posiCnt):

@@ -1,6 +1,7 @@
 # patients
 # 検査陽性患者の属性
 
+import re
 import covid19_util
 import logging
 logger = logging.getLogger()
@@ -11,27 +12,37 @@ def convert2json(csvData, dtUpdated):
         logger.info(dtUpdated)
         logger.info(csvData)
 
-        listdate = csvData["公表_年月日"]
-        listcity = csvData["市区町村名"]
-        listresidence = csvData["患者_居住地"]
-        listage = csvData["患者_年代"]
-        listsex = csvData["患者_性別"]
-        listdischarge = csvData["退院済フラグ"]
+        listDate = csvData["公表_年月日"]
+        listCity = csvData["市区町村名"]
+        listResidence = csvData["患者_居住地"]
+        listAge = csvData["患者_年代"]
+        listSex = csvData["患者_性別"]
+        listDischarge = csvData["退院済フラグ"]
 
         dataList = []
 
-        for n in range(len(listdate)):
+        for n in range(len(listDate)):
 
-            day = listdate[n]
+            Date = re.split('[年月日:;.,-/]',  listDate[n])
+            for i in (1,2): Date[i] = Date[i].zfill(2)
+            day = Date[0]+"-"+Date[1]+"-"+ Date[2]
+
             releaseday = "{0}T08:00:00.000Z".format(day)
-            residence = listcity[n] + ' ' + listresidence[n]
-            age = listage[n]
+            
+            Residence = listResidence[n]
+            if covid19_util.is_nan(Residence):
+                Residence = "--"
+            residence = listCity[n] + ' ' + Residence
+            
+            age = listAge[n]
             if covid19_util.is_nan(age):
                 age = "不明"
-            sex = listsex[n]
+                
+            sex = listSex[n]
             if covid19_util.is_nan(sex):
                 sex = "不明"
-            discharge = int(listdischarge[n])
+                
+            discharge = int(listDischarge[n])
             if covid19_util.is_nan(discharge):
                 discharge = "不明"
 
