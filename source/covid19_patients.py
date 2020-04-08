@@ -11,7 +11,7 @@ def convert2json(csvData, dtUpdated):
         logger.info(dtUpdated)
         logger.info(csvData)
 
-        listdate = csvData["公表_年月日"]
+        listDate = csvData["公表_年月日"]
         listresidence = csvData["患者_居住地"]
         listage = csvData["患者_年代"]
         listsex = csvData["患者_性別"]
@@ -19,9 +19,19 @@ def convert2json(csvData, dtUpdated):
 
         dataList = []
 
-        for n in range(len(listdate)):
+        for n in range(len(listDate)):
 
-            day = listdate[n]
+            if '/' in listDate[n]:
+                Date= listDate[n].split("/")
+                Date[1] = Date[1].zfill(2)
+                Date[2] = Date[2].zfill(2)
+                day = Date[0]+"-"+Date[1]+"-"+ Date[2]
+            elif '-' in listDate[n]:
+                Date= listDate[n].split("-")
+                Date[1] = Date[1].zfill(2)
+                Date[2] = Date[2].zfill(2)
+                day = Date[0]+"-"+Date[1]+"-"+ Date[2]
+
             releaseday = "{0}T08:00:00.000Z".format(day)
             residence = listresidence[n]
             age = listage[n]
