@@ -25,6 +25,7 @@ def lambda_handler(event, context):
         logger.info("-----")
         logger.info(json.dumps(event))
         result = {}
+        hasError = False
 
         types = SUPPORTED_TYPE
         if event is not None:
@@ -33,6 +34,7 @@ def lambda_handler(event, context):
                 types = event["queryStringParameters"]["type"]
             
         result["lastUpdate"] = ""
+        result["hasError"] = hasError
 
         logger.info(types)
         dtLastUpdate = datetime(2000, 1, 1, 1, 1, tzinfo=pytz.timezone('Asia/Tokyo'))
@@ -71,9 +73,15 @@ def lambda_handler(event, context):
 
             else:
                 result[type] = "not supported..."
+                hasError = True
+                
+            if result[type] is None:
+                hasError |= True
+                result[type] = "raise exception..."
                 
         result["lastUpdate"] = dtLastUpdate.strftime('%Y/%m/%d %H:%M')
-                
+        result["hasError"] = hasError
+
         logger.info(result)
         return {
             "statusCode": 200,
