@@ -26,14 +26,14 @@ jobs:
     - run: pip install requests
     - name: RUN PYTHON SCRIPT
       run: |
-        python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process(); print(x)" > data2.json
+        python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process(); print(x)" > data.json
         
     - name: COMMIT
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add data2.json
-        git commit -m "[BOT] Update data2.json" || true
+        git add data.json
+        git commit -m "[BOT] Update data.json" || true
         git fetch origin development
         git merge
         
