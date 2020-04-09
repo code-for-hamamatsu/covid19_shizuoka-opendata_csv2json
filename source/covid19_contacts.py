@@ -1,6 +1,7 @@
 # contacts
 # 新型コロナに関する相談件数
 
+import re
 import covid19_util
 import logging
 logger = logging.getLogger()
@@ -14,7 +15,11 @@ def convert2json(csvData, dtUpdated):
         
         length = len(listDate)
         for n in range(length):
-            day = listDate[n]
+
+            Date = re.split('[年月日:;.,-/]',  listDate[n])
+            for i in (1,2): Date[i] = Date[i].zfill(2)
+            day = Date[0]+"-"+Date[1]+"-"+ Date[2]
+
             cnt = listCnt[n]
             if not covid19_util.is_nan(cnt):
                 list.append({'日付': "{0}T08:00:00.000Z".format(day), "小計": int(cnt)})
