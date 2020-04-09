@@ -34,7 +34,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add data2.json
         git commit -m "[BOT] Update data2.json" || true
-        git fetch origin dev-hamamatsu
+        git fetch origin development
         git merge
         
     - name: PUSH
