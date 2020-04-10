@@ -138,3 +138,4 @@ def getCSVData(apiAddress):
     except Exception as e:
         logger.exception(e)
         return None, None
+        
