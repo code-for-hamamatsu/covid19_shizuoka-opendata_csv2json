@@ -8,6 +8,7 @@ import io
 import json
 import pytz
 from datetime import date, datetime
+import time
 import covid19_main_summary
 import covid19_patients
 import covid19_patients_summary
@@ -50,30 +51,34 @@ def lambda_handler(event, context):
             
             if(dtLastUpdate < dtUpdated):
                 dtLastUpdate = dtUpdated
-                
+            
+            callback = None
             if type == "main_summary":
                 # 検査陽性者の状況
-                result[type] = covid19_main_summary.convert2json(csvData, dtUpdated)
-
+                callback = covid19_main_summary.convert2json
+                
             elif type == "patients":
                 # 検査陽性患者の属性
-                result[type] = covid19_patients.convert2json(csvData, dtUpdated)
+                callback = covid19_patients.convert2json
 
             elif type == "patients_summary":
                 # 検査陽性患者数
-                result[type] = covid19_patients_summary.convert2json(csvData, dtUpdated)
+                callback = covid19_patients_summary.convert2json
                 
             elif type == "inspection_persons":
                 # PCR検査実施人数
-                result[type] = covid19_inspection_persons.convert2json(csvData, dtUpdated)
+                callback = covid19_inspection_persons.convert2json
                 
             elif type == "contacts":
                 # 新型コロナに関する相談件数
-                result[type] = covid19_contacts.convert2json(csvData, dtUpdated)
+                callback = covid19_contacts.convert2json
 
             else:
                 result[type] = "not supported..."
                 hasError = True
+            
+            if callback is not None:
+                result[type] = handler(callback, csvData, dtUpdated)
                 
             if result[type] is None:
                 hasError |= True
@@ -93,6 +98,18 @@ def lambda_handler(event, context):
             "statusCode": 500,
             "body": "error"
         }
+
+def handler(func,*args):
+    result = None
+    
+    for i in range(3):
+        result = func(*args)
+        if result is not None:
+            break
+        else:
+            time.sleep(1)
+            
+    return result
 
 def getCSVData(apiAddress):
     try:
@@ -121,3 +138,4 @@ def getCSVData(apiAddress):
     except Exception as e:
         logger.exception(e)
         return None, None
+        
