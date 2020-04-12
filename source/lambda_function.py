@@ -7,6 +7,7 @@ import requests
 import io
 import json
 import pytz
+from retry import retry
 from datetime import date, datetime
 import time
 import covid19_main_summary
@@ -52,34 +53,30 @@ def lambda_handler(event, context):
             if(dtLastUpdate < dtUpdated):
                 dtLastUpdate = dtUpdated
             
-            callback = None
             if type == "main_summary":
                 # 検査陽性者の状況
-                callback = covid19_main_summary.convert2json
+                result[type] = covid19_main_summary.convert2json(csvData, dtUpdated)
                 
             elif type == "patients":
                 # 検査陽性患者の属性
-                callback = covid19_patients.convert2json
+                result[type] = covid19_patients.convert2json(csvData, dtUpdated)
 
             elif type == "patients_summary":
                 # 検査陽性患者数
-                callback = covid19_patients_summary.convert2json
+                result[type] = covid19_patients_summary.convert2json(csvData, dtUpdated)
                 
             elif type == "inspection_persons":
                 # PCR検査実施人数
-                callback = covid19_inspection_persons.convert2json
+                result[type] = covid19_inspection_persons.convert2json(csvData, dtUpdated)
                 
             elif type == "contacts":
                 # 新型コロナに関する相談件数
-                callback = covid19_contacts.convert2json
+                result[type] = covid19_contacts.convert2json(csvData, dtUpdated)
 
             else:
                 result[type] = "not supported..."
                 hasError = True
             
-            if callback is not None:
-                result[type] = handler(callback, csvData, dtUpdated)
-                
             if result[type] is None:
                 hasError |= True
                 result[type] = "raise exception..."
@@ -99,43 +96,35 @@ def lambda_handler(event, context):
             "body": "error"
         }
 
-def handler(func,*args):
-    result = None
-    
-    for i in range(3):
-        result = func(*args)
-        if result is not None:
-            break
-        else:
-            time.sleep(1)
-            
-    return result
-
 def getCSVData(apiAddress):
     try:
-        apiResponse = requests.get(apiAddress).json()
-        resources = apiResponse["result"]["resources"]
-        
-        apiResources = None
-        csvAddress = None
-        for i in range(len(resources)):
-            apiResources = resources[i]
-            csvAddress = apiResources["download_url"]
-            root, ext = os.path.splitext(csvAddress)
-            if ext.lower() == ".csv":
-                logger.info(csvAddress)
-                break
-        
-        # タイムゾーン +09:00 -> +0900 for strptime %f
-        dateStr = apiResources["updated"][:-3] + apiResources["updated"][-2:]
-        dtUpdated = datetime.strptime(dateStr, "%Y-%m-%dT%H:%M:%S.%f%z")
-        logger.info(dtUpdated)
-
-        res = requests.get(csvAddress).content
-        csvData = pd.read_csv(io.StringIO(res.decode("shift-jis")), sep=",", engine="python")
+        csvData, dtUpdated = getCSVDataWithRetry(apiAddress)
         return csvData, dtUpdated
 
     except Exception as e:
         logger.exception(e)
         return None, None
-        
+
+@retry(tries=3, delay=1)
+def getCSVDataWithRetry(apiAddress):
+    apiResponse = requests.get(apiAddress).json()
+    resources = apiResponse["result"]["resources"]
+    
+    apiResources = None
+    csvAddress = None
+    for i in range(len(resources)):
+        apiResources = resources[i]
+        csvAddress = apiResources["download_url"]
+        root, ext = os.path.splitext(csvAddress)
+        if ext.lower() == ".csv":
+            logger.info(csvAddress)
+            break
+    
+    # タイムゾーン +09:00 -> +0900 for strptime %f
+    dateStr = apiResources["updated"][:-3] + apiResources["updated"][-2:]
+    dtUpdated = datetime.strptime(dateStr, "%Y-%m-%dT%H:%M:%S.%f%z")
+    logger.info(dtUpdated)
+
+    res = requests.get(csvAddress).content
+    csvData = pd.read_csv(io.StringIO(res.decode("shift-jis")), sep=",", engine="python")
+    return csvData, dtUpdated
