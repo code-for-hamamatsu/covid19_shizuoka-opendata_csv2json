@@ -8,9 +8,6 @@ logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
-        logger.info(dtUpdated)
-        logger.info(csvData)
-
         listCnt = csvData["検査実施人数"]
         listPosi = csvData["陽性患者数"]
         listHosp = csvData["入院中"]
@@ -49,7 +46,28 @@ def convert2json(csvData, dtUpdated):
             if covid19_util.is_nan(listDeath[n]): sumDeath = sumDeath
             else: sumDeath = sumDeath + listDeath[n]
 
-        return{"attr": "検査実施人数","value": int(sumCnt),"children": [{"attr": "陽性患者数","value": int(sumPosi),"children": [{"attr": "入院中","value": int(sumHosp),"children": [{"attr": "軽症・中等症","value": int(sumMild)},{"attr": "重症","value": int(sumServ)}]},{"attr": "退院","value": int(sumDischa)},{"attr": "死亡","value": int(sumDeath)}]}]}
+        return{
+            "date": dtUpdated.strftime('%Y/%m/%d %H:%M'), 
+            "attr": "検査実施人数", 
+            "value": int(sumCnt), 
+            "children": [
+                {
+                    "attr": "陽性患者数", 
+                    "value": int(sumPosi), 
+                    "children": [
+                        {
+                            "attr": "入院中", "value": int(sumHosp), 
+                            "children": [
+                                {"attr": "軽症・中等症", "value": int(sumMild)}, 
+                                {"attr": "重症", "value": int(sumServ)}
+                            ]
+                        }, 
+                        {"attr": "退院","value": int(sumDischa)}, 
+                        {"attr": "死亡","value": int(sumDeath)}
+                    ]
+                }
+            ]
+        }
 
     except Exception as e:
         logger.exception(e)
