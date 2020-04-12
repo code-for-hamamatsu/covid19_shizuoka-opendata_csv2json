@@ -84,7 +84,6 @@ def lambda_handler(event, context):
         result["lastUpdate"] = dtLastUpdate.strftime('%Y/%m/%d %H:%M')
         result["hasError"] = hasError
 
-        logger.info(result)
         return {
             "statusCode": 200,
             "body": json.dumps(result, ensure_ascii=False, indent=2)

@@ -8,9 +8,6 @@ logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
-        logger.info(dtUpdated)
-        logger.info(csvData)
-
         listCnt = csvData["検査実施人数"]
         listPosi = csvData["陽性患者数"]
         listHosp = csvData["入院中"]

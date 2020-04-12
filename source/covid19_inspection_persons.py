@@ -9,9 +9,6 @@ logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
-        logger.info(dtUpdated)
-        logger.info(csvData)
-
         listDate = csvData["実施_年月日"]
         listCnt = csvData["検査実施_人数"]
         labels = []
