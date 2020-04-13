@@ -24,10 +24,8 @@ jobs:
         ref: development
 
     - name: RUN PYTHON SCRIPT
-      env:
-        APIKEY_CSV2JSON: ${{ secrets.APIKEY_CSV2JSON }}
       run: |
-        python3 -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process($env:APIKEY_CSV2JSON); print(x)" > data.json
+        python3 -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process(${{ secrets.APIKEY_CSV2JSON }}); print(x)" > data.json
         
         
     - name: COMMIT
