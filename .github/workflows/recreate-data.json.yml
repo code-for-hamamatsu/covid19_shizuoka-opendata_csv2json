@@ -27,7 +27,7 @@ jobs:
       env:
         APIKEY_CSV2JSON: ${{ secrets.APIKEY_CSV2JSON }}
       run: |
-        python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process($env:APIKEY_CSV2JSON); print(x)" > data.json
+        python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process('JnA0GwMgEK4LmFaNu0zVg7l9ipeCV7oE2ao67gIs'); print(x)" > data.json
         
     - name: COMMIT
       run: |
