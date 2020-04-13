@@ -29,6 +29,7 @@ jobs:
       run: |
         python3 -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process('$env:APIKEY_CSV2JSON'); print(x)" > data.json
         
+        
     - name: COMMIT
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
