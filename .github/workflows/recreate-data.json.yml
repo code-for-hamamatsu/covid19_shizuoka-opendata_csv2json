@@ -1,34 +1,23 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
+# This is a workflow to create data.json with Actions	
 name: data.json builder
-
+env:
+  TZ: Asia/Tokyo
 on:
-  push:
-    branches: [ development ]
-  pull_request:
-    branches: [ development ]
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  schedule:
+    - cron:  '*/15 * * * *'
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  check_data:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
       with:
         ref: development
 
-    - name: RUN PYTHON SCRIPT
+    - name: RUN PYTHON SCRIPT(create data.json)
       run: |
         python3 -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process('${{ secrets.APIKEY_CSV2JSON }}'); print(x)" > data.json
         
-        
-    - name: COMMIT
+    - name: commit data.json if update
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
@@ -36,8 +25,8 @@ jobs:
         git commit -m "[BOT] Update data.json" || true
         git fetch origin development
         git merge
-        
-    - name: PUSH
+
+    - name: PUSH changes
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
