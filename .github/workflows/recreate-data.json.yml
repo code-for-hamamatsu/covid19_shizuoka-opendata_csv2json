@@ -4,7 +4,7 @@ env:
   TZ: Asia/Tokyo
 on:
   schedule:
-    - cron:  '0 9 * * *'
+    - cron:  "*/5 * * * *"
 jobs:
   check_data:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
 
     - name: RUN PYTHON SCRIPT(create data.json)
       run: |
-        python3 -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process('${{ secrets.APIKEY_CSV2JSON }}'); print(x)" > data.json
+        python3 -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process('${{ secrets.API_CSV2JSON_ADDRESS }}', '${{ secrets.API_CSV2JSON_KEY }}'); print(x)" > data.json
         
     - name: commit data.json if update
       run: |
