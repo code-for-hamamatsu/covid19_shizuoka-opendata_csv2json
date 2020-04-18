@@ -4,7 +4,7 @@ env:
   TZ: Asia/Tokyo
 on:
   schedule:
-    - cron:  "*/5 * * * *"
+    - cron:  "0 */6 * * *"
 jobs:
   check_data:
     runs-on: ubuntu-latest
