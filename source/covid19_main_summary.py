@@ -46,6 +46,8 @@ def convert2json(csvData, dtUpdated):
             if covid19_util.is_nan(listDeath[n]): sumDeath = sumDeath
             else: sumDeath = sumDeath + listDeath[n]
 
+        sumHosp = sumHosp - sumDischa
+
         return{
             "date": dtUpdated.strftime('%Y/%m/%d %H:%M'), 
             "attr": "検査実施人数", 
