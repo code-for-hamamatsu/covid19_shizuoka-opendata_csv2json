@@ -1,6 +1,7 @@
-# main_summary
-# 検査陽性者の状況
+# patients
+# 検査陽性者の状況(陽性患者の属性より)
 
+import re
 import covid19_util
 import logging
 logger = logging.getLogger()
@@ -8,50 +9,45 @@ logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
-        listCnt = csvData["検査実施人数"]
-        listPosi = csvData["陽性患者数"]
-        listHosp = csvData["入院中"]
-        listMild = csvData["軽症・中軽症"]
-        listServ = csvData["重症"]
-        listDischa = csvData["退院"]
-        listDeath = csvData["死亡"]
+        #main_summary.pyの変数を流用
+        listNo = csvData["No"] #陽性患者数カウントに利用
+        listDischa = csvData["退院済フラグ"] #入院数/退院数カウントに利用
+        listStatus = csvData["患者_状態"] #症状別入院数カウントに利用
 
-        sumCnt = 0
-        sumPosi = 0
-        sumHosp = 0
-        sumMild = 0
-        sumServ = 0
-        sumDischa = 0
-        sumDeath = 0
+        sumPosi = 0 #陽性患者数
+        sumHosp = 0 #入院中
+        sumMild = 0 #軽症・中軽症
+        sumServ = 0 #重症
+        sumDischa = 0 #退院
+        sumDeath = 0 #死亡
 
-        for n in range(len(listCnt)):
-            if covid19_util.is_nan(listCnt[n]): sumCnt = sumCnt
-            else: sumCnt = sumCnt + listCnt[n]
             
-            if covid19_util.is_nan(listPosi[n]): sumPosi = sumPosi
-            else: sumPosi = sumPosi + listPosi[n]
+        #陽性患者＝リストの要素数
+        sumPosi = len(csvData)
 
-            if covid19_util.is_nan(listHosp[n]): sumHosp = sumHosp
-            else: sumHosp = sumHosp + listHosp[n]
+        for n in range(len(csvData)):
+            #入院中患者のカウント
+            if covid19_util.is_nan(listDischa[n]): sumHosp = sumHosp
+            elif listDischa[n] == 0: sumHosp += 1
 
-            if covid19_util.is_nan(listMild[n]): sumMild = sumMild
-            else: sumMild = sumMild + listMild[n]
+            #軽症・中等症者のカウント
+            if covid19_util.is_nan(listStatus[n]): sumMild = sumMild
+            elif listStatus[n] == "軽症" or listStatus[n] == "中等症": sumMild += 1
 
-            if covid19_util.is_nan(listServ[n]): sumServ = sumServ
-            else: sumServ = sumServ + listServ[n]
+            #重症者のカウント
+            if covid19_util.is_nan(listStatus[n]): sumServ = sumServ
+            elif listStatus[n] == "重症": sumServ += 1
 
+            #退院者カウント
             if covid19_util.is_nan(listDischa[n]): sumDischa = sumDischa
-            else: sumDischa = sumDischa + listDischa[n]
+            elif listDischa[n] == 1: sumDischa += 1
 
-            if covid19_util.is_nan(listDeath[n]): sumDeath = sumDeath
-            else: sumDeath = sumDeath + listDeath[n]
-
-        sumHosp = sumHosp - sumDischa
+            #死亡
+            if covid19_util.is_nan(listStatus[n]): sumDeath = sumDeath
+            elif listStatus[n] == "死亡": sumDeath += 1
 
         return{
             "date": dtUpdated.strftime('%Y/%m/%d %H:%M'), 
-            "attr": "検査実施人数", 
-            "value": int(sumCnt), 
             "children": [
                 {
                     "attr": "陽性患者数", 
@@ -74,4 +70,3 @@ def convert2json(csvData, dtUpdated):
     except Exception as e:
         logger.exception(e)
         return None
-        
