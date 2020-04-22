@@ -32,11 +32,11 @@ def convert2json(csvData, dtUpdated):
 
             #軽症・中等症者のカウント
             if covid19_util.is_nan(listStatus[n]): sumMild = sumMild
-            elif listStatus[n] == "軽症" or listStatus[n] == "中等症": sumMild += 1
+            elif (listStatus[n] == "軽症" or listStatus[n] == "中等症") and listDischa[n] == 0: sumMild += 1
 
             #重症者のカウント
-            if covid19_util.is_nan(listStatus[n]): sumServ = sumServ
-            elif listStatus[n] == "重症": sumServ += 1
+            if covid19_util.is_nan(listStatus[n]) : sumServ = sumServ
+            elif listStatus[n] == "重症" and listDischa[n] == 0: sumServ += 1
 
             #退院者カウント
             if covid19_util.is_nan(listDischa[n]): sumDischa = sumDischa
