@@ -1,8 +1,8 @@
 {
-  "lastUpdate": "2020/04/22 09:07",
+  "lastUpdate": "2020/04/22 13:00",
   "hasError": false,
   "main_summary": {
-    "date": "2020/04/21 18:56",
+    "date": "2020/04/22 13:00",
     "attr": "検査実施人数",
     "value": 578,
     "children": [
@@ -12,11 +12,11 @@
         "children": [
           {
             "attr": "入院中",
-            "value": 3,
+            "value": -3,
             "children": [
               {
                 "attr": "軽症・中等症",
-                "value": 7
+                "value": 2
               },
               {
                 "attr": "重症",
@@ -26,7 +26,7 @@
           },
           {
             "attr": "退院",
-            "value": 4
+            "value": 5
           },
           {
             "attr": "死亡",
