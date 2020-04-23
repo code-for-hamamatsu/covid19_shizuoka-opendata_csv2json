@@ -1,43 +1,32 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Python application
-
+# This is a workflow to create data.json with Actions	
+name: data.json builder
+env:
+  TZ: Asia/Tokyo
 on:
-  push:
-    branches: [ development ]
-  pull_request:
-    branches: [ development ]
-
+  schedule:
+    - cron:  "0 */6 * * *"
 jobs:
-  build:
-
+  check_data:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.6
-      uses: actions/setup-python@v1
       with:
-        python-version: 3.6
-    - name: Install dependencies
+        ref: development
+
+    - name: RUN PYTHON SCRIPT(create data.json)
       run: |
-        python -m pip install --upgrade pip
-    - run: pip install requests
-    - name: RUN PYTHON SCRIPT
-      run: |
-        python -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process(); print(x)" > data.json
+        python3 -c "import os; os.chdir('.github/tools'); import make_data_json; x = make_data_json.process('${{ secrets.API_CSV2JSON_ADDRESS }}', '${{ secrets.API_CSV2JSON_KEY }}'); print(x)" > data.json
         
-    - name: COMMIT
+    - name: commit data.json if update
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         git add data.json
         git commit -m "[BOT] Update data.json" || true
         git fetch origin development
         git merge
-        
-    - name: PUSH
+
+    - name: PUSH changes
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
