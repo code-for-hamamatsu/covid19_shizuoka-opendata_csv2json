@@ -125,5 +125,16 @@ def getCSVDataWithRetry(apiAddress):
     logger.info(dtUpdated)
 
     res = requests.get(csvAddress).content
-    csvData = pd.read_csv(io.StringIO(res.decode("shift-jis")), sep=",", engine="python")
+    
+    try:
+        # 浜松市
+        csvData = pd.read_csv(io.StringIO(res.decode("shift-jis")), sep=",", engine="python")
+    except Exception as e:
+        try:
+            # 静岡市
+            csvData = pd.read_csv(io.StringIO(res.decode("utf-8_sig")), sep=",", engine="python")
+        except Exception as e:
+            # 保険、、
+            csvData = pd.read_csv(io.StringIO(res.decode("utf-8")), sep=",", engine="python")
+
     return csvData, dtUpdated

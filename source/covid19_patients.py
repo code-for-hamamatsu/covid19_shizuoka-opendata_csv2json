@@ -14,7 +14,12 @@ def convert2json(csvData, dtUpdated):
         listResidence = csvData["患者_居住地"]
         listAge = csvData["患者_年代"]
         listSex = csvData["患者_性別"]
-        listDischarge = csvData["退院済フラグ"]
+        listDischarge = None
+        try:
+            listDischarge = csvData["患者_退院済フラグ"]
+        except Exception as e:
+            # 浜松市
+            listDischarge = csvData["退院済フラグ"]
 
         dataList = []
 

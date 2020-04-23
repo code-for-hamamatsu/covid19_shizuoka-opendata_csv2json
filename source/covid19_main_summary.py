@@ -11,8 +11,13 @@ def convert2json(csvData, dtUpdated):
     try:
         #main_summary.pyの変数を流用
         listNo = csvData["No"] #陽性患者数カウントに利用
-        listDischa = csvData["退院済フラグ"] #入院数/退院数カウントに利用
         listStatus = csvData["患者_状態"] #症状別入院数カウントに利用
+        listDischa = None #入院数/退院数カウントに利用
+        try:
+            listDischa = csvData["患者_退院済フラグ"]
+        except Exception as e:
+            # 浜松市
+            listDischa = csvData["退院済フラグ"]
 
         sumPosi = 0 #陽性患者数
         sumHosp = 0 #入院中
