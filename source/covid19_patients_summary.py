@@ -1,32 +1,48 @@
 # patients_summary
-# 検査陽性患者数
+# 検査陽性患者数(陽性患者の属性より)
 
+import json
 import re
 import covid19_util
 import logging
+import datetime
+from datetime import datetime as dt
+from dateutil.relativedelta import relativedelta
+import collections
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-def convert2json(csvData, dtUpdated):
+def convert2json(csvData, dtUpdated, increment=0):
     try:
         listDate = csvData["公表_年月日"]
-        listPosi = csvData["陽性患者人数"]
 
         dataList = []
-
-        for n in range(len(listDate)):
-
-            Date = re.split('[年月日:;.,-/]',  listDate[n])
-            for i in (1,2): Date[i] = Date[i].zfill(2)
-            day = Date[0]+"-"+Date[1]+"-"+ Date[2]
-
-            releaseday = "{0}T08:00:00.000Z".format(day)
-            posiCnt = listPosi[n]
-            if covid19_util.is_nan(posiCnt):
-                posiCnt = 0
-
-            dataList.append({"日付": releaseday, "小計": int(posiCnt)})
-
+        
+        today = datetime.date.today()
+        dateStart = datetime.datetime(2020, 1, 29, 8, 0, 0) + datetime.timedelta(days=int(increment))
+        dateEnd = today + relativedelta(hours=8, minutes=0, microseconds=0)
+        days = (dateEnd - dateStart).days + 1
+        
+        for i in range(days):
+            date = dateStart + datetime.timedelta(days=i)
+            releaseday = date.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+            dataList.append({"日付": releaseday, "小計": int(0)})
+            
+        counter = collections.Counter(listDate)
+        
+        for day in counter:
+            num = counter[day]
+            date = None
+            try:
+                date = dt.strptime(day, "%Y-%m-%d")
+            except Exception as e:
+                # 静岡市
+                date = dt.strptime(day, "%Y/%m/%d")
+                    
+            index = (date - dateStart).days
+            dataList[index + 1]["小計"] = num
+            
         return {"date": dtUpdated.strftime('%Y/%m/%d %H:%M'), "data": dataList}
 
     except Exception as e:

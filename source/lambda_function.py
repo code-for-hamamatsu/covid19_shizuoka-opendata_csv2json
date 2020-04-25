@@ -20,7 +20,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-SUPPORTED_TYPE = "main_summary:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,patients:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,patients_summary:92f9ebcd-a3f1-4d5d-899b-d69214294a45,inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314"
+SUPPORTED_TYPE = "main_summary:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,patients:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,patients_summary:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,inspection_persons:d4827176-d887-412a-9344-f84f161786a2,contacts:1b57f2c0-081e-4664-ba28-9cce56d0b314"
 
 def lambda_handler(event, context):
     try:  
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
             tmp = data.split(":")
             type = tmp[0]
             apiID = tmp[1]
-            
+
             csvData, dtUpdated = getCSVData("https://opendata.pref.shizuoka.jp/api/package_show?id=" + apiID)
             
             if(dtLastUpdate < dtUpdated):
@@ -63,7 +63,10 @@ def lambda_handler(event, context):
 
             elif type == "patients_summary":
                 # 検査陽性患者数
-                result[type] = covid19_patients_summary.convert2json(csvData, dtUpdated)
+                increment = 0
+                if len(tmp) >= 3:
+                    increment = tmp[2]
+                result[type] = covid19_patients_summary.convert2json(csvData, dtUpdated, increment)
                 
             elif type == "inspection_persons":
                 # PCR検査実施人数
@@ -95,9 +98,24 @@ def lambda_handler(event, context):
             "body": "error"
         }
 
+
+class CSVData:
+    def __init__(self, csvData, dtUpdate):
+        self.csvData = csvData
+        self.dtUpdate = dtUpdate
+
+CSVDATA_BACK = {}
 def getCSVData(apiAddress):
     try:
-        csvData, dtUpdated = getCSVDataWithRetry(apiAddress)
+        csvData = dtUpdated = None
+        
+        if(apiAddress in CSVDATA_BACK):
+            csvData = CSVDATA_BACK[apiAddress].csvData
+            dtUpdated = CSVDATA_BACK[apiAddress].dtUpdate
+        else:
+            csvData, dtUpdated = getCSVDataWithRetry(apiAddress)
+            CSVDATA_BACK[apiAddress] = CSVData(csvData, dtUpdated)
+        
         return csvData, dtUpdated
 
     except Exception as e:
@@ -138,3 +156,8 @@ def getCSVDataWithRetry(apiAddress):
             csvData = pd.read_csv(io.StringIO(res.decode("utf-8")), sep=",", engine="python")
 
     return csvData, dtUpdated
+
+#def main():
+#    x = lambda_handler(None, None)
+#    print(x['body'])
+#main()

@@ -47,6 +47,10 @@ def convert2json(csvData, dtUpdated):
             discharge = int(listDischarge[n])
             if covid19_util.is_nan(discharge):
                 discharge = "不明"
+            elif discharge == 1:
+                discharge = "○"
+            elif discharge == 0:
+                discharge = None
 
             dataList.append({"リリース日": releaseday, "居住地": residence, "年代": age, "性別": sex, "退院": discharge, "date": day})
 
