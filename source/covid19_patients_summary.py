@@ -33,7 +33,13 @@ def convert2json(csvData, dtUpdated, increment=0):
         
         for day in counter:
             num = counter[day]
-            date = dt.strptime(day, "%Y-%m-%d")
+            date = None
+            try:
+                date = dt.strptime(day, "%Y-%m-%d")
+            except Exception as e:
+                # 静岡市
+                date = dt.strptime(day, "%Y/%m/%d")
+                    
             index = (date - dateStart).days
             dataList[index + 1]["小計"] = num
             
