@@ -50,6 +50,11 @@ def lambda_handler(event, context):
 
             csvData, dtUpdated = getCSVData("https://opendata.pref.shizuoka.jp/api/package_show?id=" + apiID)
             
+            if csvData is None:
+                hasError |= True
+                result[type] = "raise exception in getCSVData...({0})".format(apiID)
+                continue
+
             if(dtLastUpdate < dtUpdated):
                 dtLastUpdate = dtUpdated
             
@@ -82,7 +87,7 @@ def lambda_handler(event, context):
             
             if result[type] is None:
                 hasError |= True
-                result[type] = "raise exception..."
+                result[type] = "raise exception in convert2json...({0})".format(apiID)
                 
         result["lastUpdate"] = dtLastUpdate.strftime('%Y/%m/%d %H:%M')
         result["hasError"] = hasError
@@ -157,7 +162,7 @@ def getCSVDataWithRetry(apiAddress):
 
     return csvData, dtUpdated
 
-#def main():
-#    x = lambda_handler(None, None)
-#    print(x['body'])
-#main()
+def main():
+    x = lambda_handler({'queryStringParameters':{'type':'inspection_persons:6b102a25-9746-4dac-b6a9-8370afe6af75'}}, None)
+    print(x['body'])
+main()
