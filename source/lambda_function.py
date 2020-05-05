@@ -161,8 +161,3 @@ def getCSVDataWithRetry(apiAddress):
             csvData = pd.read_csv(io.StringIO(res.decode("utf-8")), sep=",", engine="python")
 
     return csvData, dtUpdated
-
-def main():
-    x = lambda_handler({'queryStringParameters':{'type':'inspection_persons:6b102a25-9746-4dac-b6a9-8370afe6af75'}}, None)
-    print(x['body'])
-main()
