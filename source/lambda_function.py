@@ -36,6 +36,7 @@ def lambda_handler(event, context):
                 types = event["queryStringParameters"]["type"]
             
         result["lastUpdate"] = ""
+        result["value"] = 0
         result["hasError"] = hasError
 
         logger.info(types)
