@@ -21,7 +21,7 @@ def convert2json(csvData, dtUpdated):
 
         sumPosi = 0 #陽性患者数
         sumHosp = 0 #入院中
-        sumMild = 0 #軽症・中軽症
+        sumMild = 0 #軽症・中軽症 + 無症状
         sumServ = 0 #重症
         sumDischa = 0 #退院
         sumDeath = 0 #死亡
@@ -37,7 +37,7 @@ def convert2json(csvData, dtUpdated):
 
             #軽症・中等症者のカウント
             if covid19_util.is_nan(listStatus[n]): sumMild = sumMild
-            elif (listStatus[n] == "軽症" or listStatus[n] == "中等症") and listDischa[n] == 0 : sumMild += 1
+            elif (listStatus[n] == "軽症" or listStatus[n] == "中等症" or listStatus[n] == "無症状") and listDischa[n] == 0 : sumMild += 1
 
             #重症者のカウント
             if covid19_util.is_nan(listStatus[n]): sumServ = sumServ

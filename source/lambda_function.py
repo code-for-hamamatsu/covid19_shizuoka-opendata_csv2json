@@ -36,6 +36,7 @@ def lambda_handler(event, context):
                 types = event["queryStringParameters"]["type"]
             
         result["lastUpdate"] = ""
+        result["value"] = 0
         result["hasError"] = hasError
 
         logger.info(types)
@@ -162,7 +163,3 @@ def getCSVDataWithRetry(apiAddress):
 
     return csvData, dtUpdated
 
-def main():
-    x = lambda_handler({'queryStringParameters':{'type':'inspection_persons:6b102a25-9746-4dac-b6a9-8370afe6af75'}}, None)
-    print(x['body'])
-main()
