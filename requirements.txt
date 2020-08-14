@@ -1,0 +1,4 @@
+retry == 0.9.2
+pandas == 1.0.3
+requests == 2.23.0
+pytz

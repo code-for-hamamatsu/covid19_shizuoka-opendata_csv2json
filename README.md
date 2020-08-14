@@ -47,3 +47,12 @@ API GatewayのGETでクエリパラメータに以下のように指定します
 ## その他
 「検査陽性者の状況」と「陽性患者数」は、「陽性患者の属性」のデータから生成します。
 
+
+## ライブラリのインストール
+$ pip install -r requirements.txt -t source
+
+## パッケージング&デプロイ コマンド
+$ find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+$ cd source
+$ zip -r ../lambda-package.zip *
+$ aws lambda update-function-code --function-name {{your function name}} --zip-file fileb://../lambda-package.zip
