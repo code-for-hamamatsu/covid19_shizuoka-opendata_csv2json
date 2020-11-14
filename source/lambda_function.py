@@ -61,7 +61,10 @@ def lambda_handler(event, context):
             
             if type == "main_summary":
                 # 検査陽性者の状況
-                result[type] = covid19_main_summary.convert2json(csvData, dtUpdated)
+                if type not in result:
+                    result[type] = covid19_main_summary.convert2json(csvData, dtUpdated)
+                else:
+                    covid19_main_summary.try2merge4xx(result[type], csvData)
                 
             elif type == "patients":
                 # 検査陽性患者の属性

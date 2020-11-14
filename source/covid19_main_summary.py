@@ -10,7 +10,6 @@ logger.setLevel(logging.INFO)
 def convert2json(csvData, dtUpdated):
     try:
         #main_summary.pyの変数を流用
-        listNo = csvData["No"] #陽性患者数カウントに利用
         listStatus = csvData["患者_状態"] #症状別入院数カウントに利用
         listDischa = None #入院数/退院数カウントに利用
         try:
@@ -75,3 +74,16 @@ def convert2json(csvData, dtUpdated):
     except Exception as e:
         logger.exception(e)
         return None
+
+def try2merge4xx(data, csvData):
+    try:
+        title = "死亡者人数"
+        if title in csvData:
+            cols = list(csvData[title])
+            num = 0
+            for i in range(len(cols)):
+                tmp = cols[i]
+                num = num + int(tmp)
+            data["children"][0]["children"][2]["value"] = num
+    except Exception as e:
+        logger.exception(e)
