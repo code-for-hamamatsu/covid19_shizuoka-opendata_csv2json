@@ -85,5 +85,7 @@ def try2merge4xx(data, csvData):
                 tmp = cols[i]
                 num = num + int(tmp)
             data["children"][0]["children"][2]["value"] = num
+            # 退院から減算
+            data["children"][0]["children"][1]["value"] = data["children"][0]["children"][1]["value"] - num
     except Exception as e:
         logger.exception(e)
