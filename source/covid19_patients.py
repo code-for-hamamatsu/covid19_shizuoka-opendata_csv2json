@@ -4,6 +4,7 @@
 import re
 import covid19_util
 import logging
+import numpy as np
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -44,7 +45,11 @@ def convert2json(csvData, dtUpdated):
             if covid19_util.is_nan(sex):
                 sex = "不明"
                 
-            discharge = int(listDischarge[n])
+            if np.isnan(listDischarge[n]):
+                discharge = 0
+            else:
+                discharge = int(listDischarge[n])
+                
             if covid19_util.is_nan(discharge):
                 discharge = "不明"
             elif discharge == 1:
