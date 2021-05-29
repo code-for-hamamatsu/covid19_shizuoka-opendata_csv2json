@@ -3,12 +3,14 @@
 
 import re
 import covid19_util
+import time
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
+        timeStart = time.perf_counter()
         #main_summary.pyの変数を流用
         listStatus = csvData["患者_状態"] #症状別入院数カウントに利用
         listDischa = None #入院数/退院数カウントに利用
@@ -50,6 +52,8 @@ def convert2json(csvData, dtUpdated):
             if covid19_util.is_nan(listStatus[n]): sumDeath = sumDeath
             elif listStatus[n] == "死亡": sumDeath += 1
             
+        timeCurr = time.perf_counter()
+        logger.info("covid19_main_summary TIME = {0} sec".format((timeCurr - timeStart)))
         return{
             "date": dtUpdated.strftime('%Y/%m/%d %H:%M'), 
             "children": [

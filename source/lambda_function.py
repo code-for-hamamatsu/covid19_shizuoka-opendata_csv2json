@@ -24,7 +24,9 @@ SUPPORTED_TYPE = "main_summary:5ab47071-3651-457c-ae2b-bfb8fdbe1af1,main_summary
 
 def lambda_handler(event, context):
     try:  
-        logger.info("-----")
+        logger.info("=== START ===")
+        timeStartTotal = time.perf_counter()
+        
         logger.info(json.dumps(event))
         result = {}
         hasError = False
@@ -44,6 +46,7 @@ def lambda_handler(event, context):
         
         dataList = types.split(",")
         for data in dataList:
+            timeStartEeach = time.perf_counter()
             logger.info(data)
             tmp = data.split(":")
             type = tmp[0]
@@ -92,9 +95,17 @@ def lambda_handler(event, context):
             if result[type] is None:
                 hasError |= True
                 result[type] = "raise exception in convert2json...({0})".format(apiID)
+
+            timeCurr = time.perf_counter()
+            logger.info("EACH TIME = {0} sec".format((timeCurr - timeStartEeach)))
                 
         result["lastUpdate"] = dtLastUpdate.strftime('%Y/%m/%d %H:%M')
         result["hasError"] = hasError
+
+        timeCurr = time.perf_counter()
+        logger.info("--------------")
+        logger.info("TOTAL TIME = {0} sec".format((timeCurr - timeStartTotal)))
+        logger.info("=== FINISH ===")
 
         return {
             "statusCode": 200,
@@ -133,7 +144,12 @@ def getCSVData(apiAddress):
 
 @retry(tries=3, delay=1)
 def getCSVDataWithRetry(apiAddress):
+    timeStart = time.perf_counter()
     apiResponse = requests.get(apiAddress).json()
+    timeCurr = time.perf_counter()
+    logger.info("getCSVDataWithRetry")
+    logger.info("APICALL TIME = {0} sec".format((timeCurr - timeStart)))
+
     resources = apiResponse["result"]["resources"]
     
     apiResources = None
@@ -151,7 +167,10 @@ def getCSVDataWithRetry(apiAddress):
     dtUpdated = datetime.strptime(dateStr, "%Y-%m-%dT%H:%M:%S.%f%z")
     logger.info(dtUpdated)
 
+    timeStart = time.perf_counter()
     res = requests.get(csvAddress).content
+    timeCurr = time.perf_counter()
+    logger.info("APICALL TIME = {0} sec".format((timeCurr - timeStart)))
     
     try:
         # 浜松市

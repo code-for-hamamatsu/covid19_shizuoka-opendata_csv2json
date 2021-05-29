@@ -9,12 +9,14 @@ import datetime
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
 import collections
+import time
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated, increment=0):
     try:
+        timeStart = time.perf_counter()
         listDate = csvData["公表_年月日"]
 
         dataList = []
@@ -43,6 +45,8 @@ def convert2json(csvData, dtUpdated, increment=0):
             index = (date - dateStart).days
             dataList[index + 1]["小計"] = num
             
+        timeCurr = time.perf_counter()
+        logger.info("covid19_patients_summary TIME = {0} sec".format((timeCurr - timeStart)))
         return {"date": dtUpdated.strftime('%Y/%m/%d %H:%M'), "data": dataList}
 
     except Exception as e:

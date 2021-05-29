@@ -5,11 +5,13 @@ import re
 import covid19_util
 import logging
 import numpy as np
+import time
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
+        timeStart = time.perf_counter()
         listDate = csvData["公表_年月日"]
         listCity = csvData["市区町村名"]
         listResidence = csvData["患者_居住地"]
@@ -59,6 +61,8 @@ def convert2json(csvData, dtUpdated):
 
             dataList.append({"リリース日": releaseday, "居住地": residence, "年代": age, "性別": sex, "退院": discharge, "date": day})
 
+        timeCurr = time.perf_counter()
+        logger.info("covid19_patients TIME = {0} sec".format((timeCurr - timeStart)))
         return {"date": dtUpdated.strftime('%Y/%m/%d %H:%M'), "data": dataList}
 
     except Exception as e:

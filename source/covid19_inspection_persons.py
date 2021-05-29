@@ -3,12 +3,14 @@
 
 import re
 import covid19_util
+import time
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
+        timeStart = time.perf_counter()
         listDate = csvData["実施_年月日"]
         listCnt = csvData["検査実施_人数"]
         labels = []
@@ -30,6 +32,8 @@ def convert2json(csvData, dtUpdated):
         datasets = []
         datasets.append({"label": "PCR検査実施人数", "data": dataList})
 
+        timeCurr = time.perf_counter()
+        logger.info("covid19_inspection_persons TIME = {0} sec".format((timeCurr - timeStart)))
         return {"date": dtUpdated.strftime('%Y/%m/%d %H:%M'), "labels": labels, "datasets": datasets}
 
     except Exception as e:
