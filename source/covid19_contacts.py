@@ -3,12 +3,14 @@
 
 import re
 import covid19_util
+import time
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def convert2json(csvData, dtUpdated):
     try:
+        timeStart = time.perf_counter()
         listDate = csvData["受付_年月日"]
         listCnt = csvData["相談件数"]
         list = []
@@ -24,6 +26,8 @@ def convert2json(csvData, dtUpdated):
             if not covid19_util.is_nan(cnt):
                 list.append({'日付': "{0}T08:00:00.000Z".format(day), "小計": int(cnt)})
 
+        timeCurr = time.perf_counter()
+        logger.info("covid19_contacts TIME = {0} sec".format((timeCurr - timeStart)))
         return {"date": dtUpdated.strftime('%Y/%m/%d %H:%M'), "data": list}
 
     except Exception as e:
